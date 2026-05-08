@@ -628,8 +628,8 @@
 
         function makeDraggable(wrapper, char) {
             let isDragging = false;
-            let startX, startY, initialX, initialY;
-            let clickTimer = null;
+            let startX, startY;
+            let startLeft, startTop;
 
             wrapper.addEventListener('mousedown', (e) => {
                 e.preventDefault();
@@ -637,14 +637,8 @@
                 startX = e.clientX;
                 startY = e.clientY;
                 
-                const rect = wrapper.getBoundingClientRect();
-                initialX = rect.left;
-                initialY = rect.top;
-
-                clickTimer = setTimeout(() => {
-                    isDragging = true;
-                    wrapper.style.zIndex = 100;
-                }, 200);
+                startLeft = parseFloat(wrapper.style.left) || char.x || 0;
+                startTop = parseFloat(wrapper.style.top) || char.y || 0;
 
                 document.addEventListener('mousemove', onMouseMove);
                 document.addEventListener('mouseup', onMouseUp);
@@ -653,22 +647,15 @@
             function onMouseMove(e) {
                 e.preventDefault();
                 
-                if (!isDragging) {
-                    const dx = Math.abs(e.clientX - startX);
-                    const dy = Math.abs(e.clientY - startY);
-                    if (dx > 5 || dy > 5) {
-                        clearTimeout(clickTimer);
-                        isDragging = true;
-                        wrapper.style.zIndex = 100;
-                    }
-                }
-
-                if (isDragging) {
-                    const dx = e.clientX - startX;
-                    const dy = e.clientY - startY;
+                const dx = Math.abs(e.clientX - startX);
+                const dy = Math.abs(e.clientY - startY);
+                
+                if (dx > 2 || dy > 2) {
+                    isDragging = true;
+                    wrapper.style.zIndex = 100;
                     
-                    const newX = initialX + dx;
-                    const newY = initialY + dy;
+                    const newX = startLeft + (e.clientX - startX);
+                    const newY = startTop + (e.clientY - startY);
                     
                     const maxX = window.innerWidth - wrapper.offsetWidth;
                     const maxY = window.innerHeight - wrapper.offsetHeight - 100;
@@ -686,8 +673,6 @@
             }
 
             function onMouseUp() {
-                clearTimeout(clickTimer);
-                
                 if (!isDragging) {
                     showProfile(char);
                 }
@@ -756,6 +741,14 @@
         }
 
         scrollArrow.addEventListener('click', toggleNavSection);
+
+        document.addEventListener('wheel', (e) => {
+            if (!navSection.classList.contains('show') && e.deltaY > 0) {
+                toggleNavSection();
+            } else if (navSection.classList.contains('show') && e.deltaY < 0) {
+                toggleNavSection();
+            }
+        }, { passive: true });
 
         closeBtn.addEventListener('click', closeModal);
         deleteBtn.addEventListener('click', deleteCurrentCharacter);
