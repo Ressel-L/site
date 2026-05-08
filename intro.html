@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>角色资料</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            background-color: #f5f0e6;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9b896' fill-opacity='0.3'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
+                linear-gradient(135deg, #e8ddd0 0%, #d4c4a8 50%, #c9b896 100%);
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn, .add-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #d4c4a8;
+            border-radius: 8px;
+            color: #5c4a32;
+            text-decoration: none;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+        }
+
+        .back-btn:hover, .add-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 80px);
+        }
+
+        .avatar-wrapper {
+            position: absolute;
+            cursor: move;
+            transition: box-shadow 0.3s;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar-wrapper:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .avatar-wrapper:active {
+            cursor: grabbing;
+            z-index: 100;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.15);
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar-name {
+            margin-top: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #333;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+        }
+
+        .scroll-arrow {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            z-index: 50;
+            opacity: 0.6;
+            transition: all 0.3s;
+        }
+
+        .scroll-arrow:hover {
+            opacity: 0.9;
+        }
+
+        .scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .nav-section {
+            width: 100%;
+            max-width: 800px;
+            padding: 30px 20px;
+            position: fixed;
+            bottom: -200px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            transition: bottom 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .nav-section.show {
+            bottom: 0;
+        }
+
+        .nav-section h3 {
+            color: #5c4a32;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .characters-bar {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            object-fit: cover;
+            border: 2px solid transparent;
+        }
+
+        .nav-avatar:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            border: 2px solid #333;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .card-header {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #333;
+        }
+
+        .card-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            border: 2px solid #333;
+            object-fit: cover;
+        }
+
+        .card-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 3px;
+            display: inline-block;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .card-body {
+            margin-bottom: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px dashed #999;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            width: 80px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            flex: 1;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        .close-btn, .save-btn, .delete-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+
+        .close-btn {
+            background: #e0e0e0;
+            color: #555;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+        }
+
+        .close-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .save-btn:hover, .delete-btn:hover {
+            opacity: 0.9;
+        }
+
+        .form-container {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .form-left {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .form-right {
+            flex: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 150px;
+        }
+
+        .upload-area {
+            width: 180px;
+            height: 180px;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .upload-area:hover,
+        .upload-area.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .upload-text {
+            color: #666;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .preview-image {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid #667eea;
+        }
+
+        .upload-hint {
+            display: none;
+        }
+
+        .image-size-warning {
+            color: #ff6b6b;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .avatar {
+                width: 80px;
+                height: 80px;
+            }
+
+            .profile-card {
+                padding: 20px;
+                max-width: 95%;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .card-name {
+                display: block;
+                text-align: center;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .form-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-right {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-btn">← 返回首页</a>
+        <button class="add-btn" id="addBtn">+ 添加人物</button>
+    </div>
+
+    <div class="container" id="container">
+        <!-- 角色头像会在这里动态生成 -->
+    </div>
+
+    <svg class="scroll-arrow" id="scrollArrow" viewBox="0 0 48 48">
+        <path d="M24 35L35 22M24 35L13 22" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+
+    <div class="nav-section" id="navSection">
+        <h3>角色列表</h3>
+        <div class="characters-bar" id="charactersBar">
+            <!-- 角色缩略图会在这里动态生成 -->
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="profile-card">
+            <div class="card-header">
+                <img src="" alt="角色头像" class="card-avatar" id="cardAvatar">
+                <div class="card-info">
+                    <div class="card-name" id="cardName">角色姓名</div>
+                    <div class="card-title">人设卡</div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <div class="info-row">
+                    <span class="info-label">姓名</span>
+                    <span class="info-value" id="infoName">-</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">简介</span>
+                    <span class="info-value" id="infoDesc">-</span>
+                </div>
+            </div>
+
+            <button class="delete-btn" id="deleteBtn" style="display: none;">删除角色</button>
+            <button class="close-btn" id="closeBtn">关闭</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addModalOverlay">
+        <div class="profile-card" style="max-width: 600px;">
+            <h2 style="margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">添加人设卡</h2>
+            
+            <div class="form-container">
+                <div class="form-left">
+                    <label style="margin-bottom: 10px; font-weight: 600;">头像图片</label>
+                    <div class="upload-area" id="avatarUpload">
+                        <div class="upload-icon">🖼️</div>
+                        <div class="upload-text">点击上传</div>
+                        <input type="file" accept="image/*" id="avatarFile">
+                    </div>
+                    <img src="" alt="" class="preview-image" id="avatarPreview" style="display: none; margin-top: 15px;">
+                    <div class="image-size-warning" id="sizeWarning">⚠️ 图片过大，可能无法保存</div>
+                </div>
+
+                <div class="form-right">
+                    <div class="form-group">
+                        <label>角色姓名</label>
+                        <input type="text" id="characterName" placeholder="输入角色姓名">
+                    </div>
+
+                    <div class="form-group">
+                        <label>角色简介</label>
+                        <textarea id="characterDesc" placeholder="输入角色简介..."></textarea>
+                    </div>
+
+                    <button class="save-btn" id="saveCharacterBtn" style="margin-top: 20px;">保存人设卡</button>
+                    <button class="close-btn" id="closeAddBtn">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('container');
+        const scrollArrow = document.getElementById('scrollArrow');
+        const navSection = document.getElementById('navSection');
+        const charactersBar = document.getElementById('charactersBar');
+        
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeBtn = document.getElementById('closeBtn');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const addBtn = document.getElementById('addBtn');
+        const addModalOverlay = document.getElementById('addModalOverlay');
+        const closeAddBtn = document.getElementById('closeAddBtn');
+        const saveCharacterBtn = document.getElementById('saveCharacterBtn');
+        
+        const avatarUpload = document.getElementById('avatarUpload');
+        const avatarFile = document.getElementById('avatarFile');
+        const avatarPreview = document.getElementById('avatarPreview');
+        const sizeWarning = document.getElementById('sizeWarning');
+        const characterName = document.getElementById('characterName');
+        const characterDesc = document.getElementById('characterDesc');
+
+        let characters = [];
+        let currentCharacterId = null;
+        let currentImageData = '';
+        const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+
+        function loadCharacters() {
+            const saved = localStorage.getItem('characters');
+            if (saved) {
+                try {
+                    characters = JSON.parse(saved);
+                } catch (e) {
+                    characters = [];
+                }
+            }
+            
+            if (characters.length === 0) {
+                characters = [
+                    {
+                        id: 1,
+                        name: '神秘少女',
+                        desc: '元素法师，能够自由操控雷电与冰霜的力量',
+                        avatar: 'https://picsum.photos/400/400?random=10',
+                        x: window.innerWidth / 2 - 50,
+                        y: window.innerHeight / 2 - 80
+                    }
+                ];
+                saveCharacters();
+            }
+            
+            renderCharacters();
+            renderNavBar();
+        }
+
+        function saveCharacters() {
+            try {
+                localStorage.setItem('characters', JSON.stringify(characters));
+                return true;
+            } catch (e) {
+                console.error('保存失败:', e);
+                return false;
+            }
+        }
+
+        function renderCharacters() {
+            container.innerHTML = '';
+            
+            characters.forEach(char => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'avatar-wrapper';
+                wrapper.style.left = char.x + 'px';
+                wrapper.style.top = char.y + 'px';
+                wrapper.dataset.characterId = char.id;
+                
+                wrapper.innerHTML = `
+                    <img src="${char.avatar}" alt="${char.name}" class="avatar">
+                    <div class="avatar-name">${char.name}</div>
+                `;
+                
+                makeDraggable(wrapper, char);
+                
+                container.appendChild(wrapper);
+            });
+        }
+
+        function makeDraggable(wrapper, char) {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+            let clickTimer = null;
+
+            wrapper.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isDragging = false;
+                startX = e.clientX;
+                startY = e.clientY;
+                
+                const rect = wrapper.getBoundingClientRect();
+                initialX = rect.left;
+                initialY = rect.top;
+
+                clickTimer = setTimeout(() => {
+                    isDragging = true;
+                    wrapper.style.zIndex = 100;
+                }, 200);
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
+
+            function onMouseMove(e) {
+                e.preventDefault();
+                
+                if (!isDragging) {
+                    const dx = Math.abs(e.clientX - startX);
+                    const dy = Math.abs(e.clientY - startY);
+                    if (dx > 5 || dy > 5) {
+                        clearTimeout(clickTimer);
+                        isDragging = true;
+                        wrapper.style.zIndex = 100;
+                    }
+                }
+
+                if (isDragging) {
+                    const dx = e.clientX - startX;
+                    const dy = e.clientY - startY;
+                    
+                    const newX = initialX + dx;
+                    const newY = initialY + dy;
+                    
+                    const maxX = window.innerWidth - wrapper.offsetWidth;
+                    const maxY = window.innerHeight - wrapper.offsetHeight - 100;
+                    
+                    const boundedX = Math.max(0, Math.min(newX, maxX));
+                    const boundedY = Math.max(60, Math.min(newY, maxY));
+                    
+                    wrapper.style.left = boundedX + 'px';
+                    wrapper.style.top = boundedY + 'px';
+                    
+                    char.x = boundedX;
+                    char.y = boundedY;
+                    saveCharacters();
+                }
+            }
+
+            function onMouseUp() {
+                clearTimeout(clickTimer);
+                
+                if (!isDragging) {
+                    showProfile(char);
+                }
+                
+                isDragging = false;
+                wrapper.style.zIndex = 10;
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            }
+        }
+
+        function renderNavBar() {
+            charactersBar.innerHTML = '';
+            
+            characters.forEach(char => {
+                const img = document.createElement('img');
+                img.className = 'nav-avatar';
+                img.src = char.avatar;
+                img.alt = char.name;
+                img.dataset.characterId = char.id;
+                
+                img.addEventListener('click', () => {
+                    showProfile(char);
+                    toggleNavSection();
+                });
+                
+                charactersBar.appendChild(img);
+            });
+        }
+
+        function showProfile(char) {
+            currentCharacterId = char.id;
+            document.getElementById('cardAvatar').src = char.avatar;
+            document.getElementById('cardName').textContent = char.name;
+            document.getElementById('infoName').textContent = char.name;
+            document.getElementById('infoDesc').textContent = char.desc;
+            deleteBtn.style.display = characters.length > 1 ? 'block' : 'none';
+            modalOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function deleteCurrentCharacter() {
+            if (characters.length <= 1) return;
+            
+            if (confirm('确定要删除这个角色吗？')) {
+                const index = characters.findIndex(c => c.id === currentCharacterId);
+                if (index !== -1) {
+                    characters.splice(index, 1);
+                    saveCharacters();
+                    renderCharacters();
+                    renderNavBar();
+                    closeModal();
+                }
+            }
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+            addModalOverlay.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function toggleNavSection() {
+            navSection.classList.toggle('show');
+            scrollArrow.classList.toggle('hidden');
+        }
+
+        scrollArrow.addEventListener('click', toggleNavSection);
+
+        closeBtn.addEventListener('click', closeModal);
+        deleteBtn.addEventListener('click', deleteCurrentCharacter);
+        closeAddBtn.addEventListener('click', closeModal);
+
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        addModalOverlay.addEventListener('click', (e) => {
+            if (e.target === addModalOverlay) closeModal();
+        });
+
+        addBtn.addEventListener('click', () => {
+            avatarPreview.style.display = 'none';
+            avatarPreview.src = '';
+            currentImageData = '';
+            sizeWarning.style.display = 'none';
+            characterName.value = '';
+            characterDesc.value = '';
+            avatarUpload.style.display = 'flex';
+            addModalOverlay.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        });
+
+        avatarFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                processFile(file);
+            }
+        });
+
+        avatarUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            avatarUpload.classList.add('dragover');
+        });
+
+        avatarUpload.addEventListener('dragleave', () => {
+            avatarUpload.classList.remove('dragover');
+        });
+
+        avatarUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            avatarUpload.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processFile(file);
+                avatarFile.files = e.dataTransfer.files;
+            }
+        });
+
+        function processFile(file) {
+            if (file.size > MAX_IMAGE_SIZE) {
+                sizeWarning.style.display = 'block';
+            } else {
+                sizeWarning.style.display = 'none';
+            }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentImageData = e.target.result;
+                avatarPreview.src = currentImageData;
+                avatarPreview.style.display = 'block';
+                avatarUpload.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        saveCharacterBtn.addEventListener('click', () => {
+            const name = characterName.value.trim();
+            const desc = characterDesc.value.trim();
+            const avatar = currentImageData;
+
+            if (!name) {
+                alert('请输入角色姓名');
+                return;
+            }
+
+            if (!avatar || avatar === '') {
+                alert('请上传头像图片');
+                return;
+            }
+
+            if (avatar.length > 5 * 1024 * 1024) {
+                alert('图片过大，请选择小于5MB的图片');
+                return;
+            }
+
+            const newChar = {
+                id: Date.now(),
+                name: name,
+                desc: desc,
+                avatar: avatar,
+                x: 100 + Math.random() * (window.innerWidth - 300),
+                y: 100 + Math.random() * (window.innerHeight - 300)
+            };
+
+            characters.push(newChar);
+            const success = saveCharacters();
+            
+            if (success) {
+                renderCharacters();
+                renderNavBar();
+                closeModal();
+                alert('人设卡保存成功！');
+            } else {
+                alert('保存失败，可能是图片太大了，请尝试使用较小的图片');
+            }
+        });
+
+        loadCharacters();
+    </script>
+</body>
+</html>
