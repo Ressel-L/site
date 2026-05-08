@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>响应式网站示例</title>
+    <title>首页</title>
     <style>
         * {
             margin: 0;
@@ -13,183 +13,324 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        header {
-            background-color: #2c3e50;
-            color: white;
-            padding: 1rem;
-        }
-
-        header .container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: cover;
+            background-attachment: fixed;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
             align-items: center;
+            justify-content: flex-end;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        nav ul {
-            list-style: none;
+        .upload-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #333;
             display: flex;
-            gap: 2rem;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            z-index: 100;
         }
 
-        nav a {
-            color: white;
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-btn input {
+            display: none;
+        }
+
+        .wheel-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s;
+            z-index: 100;
             text-decoration: none;
-            transition: color 0.3s;
         }
 
-        nav a:hover {
-            color: #3498db;
+        .wheel-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
-        main {
-            padding: 2rem 0;
+        .scroll-arrow {
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 25px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            z-index: 99;
+            opacity: 0.6;
         }
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        .scroll-arrow:hover {
+            opacity: 0.9;
         }
 
-        .card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+        .scroll-arrow.hidden {
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-        }
-
-        .card img {
+        .scroll-arrow svg {
             width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 4px;
-            margin-bottom: 1rem;
+            height: 100%;
+            fill: rgba(255, 255, 255, 0.8);
+            animation: bounce 2s infinite;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #3498db;
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(5px); }
+        }
+
+        .nav-section {
+            width: 100%;
+            max-width: 900px;
+            padding: 30px 20px;
+            position: fixed;
+            bottom: -400px;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            transition: bottom 0.5s ease;
+        }
+
+        .nav-section.show {
+            bottom: 0;
+        }
+
+        .nav-title {
             color: white;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .nav-card {
+            background: rgba(255, 255, 255, 0.65);
+            border-radius: 16px;
+            padding: 25px 15px;
+            text-align: center;
             text-decoration: none;
-            border-radius: 4px;
-            min-width: 120px;
-            text-align: center;
-            transition: background-color 0.3s;
+            color: #333;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .btn:hover {
-            background-color: #2980b9;
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
         }
 
-        footer {
-            background-color: #2c3e50;
+        .nav-card-icon {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .nav-card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .nav-card-desc {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .footer {
             color: white;
             text-align: center;
-            padding: 1rem;
-            margin-top: 2rem;
+            padding: 15px;
+            opacity: 0.7;
+            font-size: 0.85rem;
+            position: fixed;
+            bottom: 0;
         }
 
         @media (max-width: 768px) {
-            header .container {
-                flex-direction: column;
-                gap: 1rem;
+            .upload-btn {
+                top: 15px;
+                left: 15px;
+                padding: 8px 12px;
+                font-size: 0.8rem;
             }
-            
-            nav ul {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
+
+            .wheel-btn {
+                top: 15px;
+                right: 15px;
+                padding: 8px 12px;
+                font-size: 0.8rem;
             }
-            
-            .card-grid {
+
+            .scroll-arrow {
+                width: 35px;
+                height: 22px;
+                bottom: 55px;
+            }
+
+            .nav-title {
+                font-size: 1.2rem;
+            }
+
+            .nav-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .nav-card {
+                padding: 20px 15px;
+            }
+
+            .nav-section {
+                padding-bottom: 60px;
             }
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 0 10px;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-            
-            .btn {
-                width: 100%;
-                padding: 15px;
-                font-size: 1.1rem;
+            .nav-title {
+                font-size: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>响应式网站</h1>
-            <nav>
-                <ul>
-                    <li><a href="#home">首页</a></li>
-                    <li><a href="#about">关于我们</a></li>
-                    <li><a href="#services">服务</a></li>
-                    <li><a href="#contact">联系我们</a></li>
-                </ul>
-            </nav>
+    <label class="upload-btn">
+        <input type="file" id="bgUpload" accept="image/*">
+        🖼️ 更换背景
+    </label>
+
+    <a href="zhuanpan.html" target="_blank" class="wheel-btn">
+        🎰 外卖转盘
+    </a>
+
+    <div class="scroll-arrow" id="scrollArrow">
+        <svg viewBox="0 0 40 25" fill="none">
+            <path d="M20 20L35 5M20 20L5 5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <div class="nav-section" id="navSection">
+        <h2 class="nav-title">快速导航</h2>
+        <div class="nav-grid">
+            <a href="intro.html" target="_blank" class="nav-card">
+                <div class="nav-card-icon">📋</div>
+                <h3 class="nav-card-title">产品简介</h3>
+                <p class="nav-card-desc">了解我们的产品特色与优势</p>
+            </a>
+            <a href="library.html" target="_blank" class="nav-card">
+                <div class="nav-card-icon">📚</div>
+                <h3 class="nav-card-title">产品文库</h3>
+                <p class="nav-card-desc">浏览丰富的产品文档资料</p>
+            </a>
+            <a href="forum.html" target="_blank" class="nav-card">
+                <div class="nav-card-icon">💬</div>
+                <h3 class="nav-card-title">产品论坛</h3>
+                <p class="nav-card-desc">参与讨论，分享你的想法</p>
+            </a>
         </div>
-    </header>
+    </div>
 
-    <main class="container">
-        <section id="home">
-            <h2>欢迎访问我们的网站</h2>
-            <p>这个网站可以在桌面端、平板和手机上完美显示。尝试调整浏览器窗口大小来体验响应式效果。</p>
-        </section>
 
-        <section id="services">
-            <h2>我们的服务</h2>
-            <div class="card-grid">
-                <div class="card">
-                    <img src="https://picsum.photos/400/200?random=1" alt="服务1">
-                    <h3>网站设计</h3>
-                    <p>专业的响应式网站设计服务，让您的业务在任何设备上都能完美展示。</p>
-                    <a href="#" class="btn">了解更多</a>
-                </div>
-                <div class="card">
-                    <img src="https://picsum.photos/400/200?random=2" alt="服务2">
-                    <h3>移动应用</h3>
-                    <p>原生和混合移动应用开发，覆盖iOS和Android平台。</p>
-                    <a href="#" class="btn">了解更多</a>
-                </div>
-                <div class="card">
-                    <img src="https://picsum.photos/400/200?random=3" alt="服务3">
-                    <h3>技术咨询</h3>
-                    <p>提供专业的技术咨询和解决方案，帮助您的业务数字化转型。</p>
-                    <a href="#" class="btn">了解更多</a>
-                </div>
-            </div>
-        </section>
-    </main>
 
-    <footer>
-        <p>&copy; 2024 响应式网站示例. 保留所有权利.</p>
-    </footer>
+    <script>
+        const bgUpload = document.getElementById('bgUpload');
+        const navSection = document.getElementById('navSection');
+        const scrollArrow = document.getElementById('scrollArrow');
+        const BgStorageKey = 'custom_background';
+
+        function setBackground(imageData) {
+            document.body.style.background = `url(${imageData})`;
+            document.body.style.backgroundSize = 'cover';
+            document.body.style.backgroundPosition = 'center';
+            document.body.style.backgroundAttachment = 'fixed';
+            localStorage.setItem(BgStorageKey, imageData);
+        }
+
+        function loadSavedBackground() {
+            const savedBg = localStorage.getItem(BgStorageKey);
+            if (savedBg) {
+                setBackground(savedBg);
+            }
+        }
+
+        bgUpload.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    setBackground(event.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function toggleNavSection() {
+            navSection.classList.toggle('show');
+            
+            if (navSection.classList.contains('show')) {
+                scrollArrow.classList.add('hidden');
+            } else {
+                scrollArrow.classList.remove('hidden');
+            }
+        }
+
+        scrollArrow.addEventListener('click', toggleNavSection);
+
+        window.addEventListener('wheel', function(e) {
+            if (e.deltaY > 50 && !navSection.classList.contains('show')) {
+                toggleNavSection();
+            } else if (e.deltaY < -50 && navSection.classList.contains('show')) {
+                toggleNavSection();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', loadSavedBackground);
+    </script>
 </body>
 </html>
