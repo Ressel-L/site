@@ -51,7 +51,32 @@
             color: white;
         }
 
-        .back-btn:hover, .add-btn:hover {
+        .import-btn, .export-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .import-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .back-btn:hover, .add-btn:hover, .import-btn:hover, .export-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
@@ -204,6 +229,7 @@
             box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
             border: 2px solid #333;
             animation: slideUp 0.3s ease;
+            position: relative;
         }
 
         @keyframes slideUp {
@@ -211,20 +237,137 @@
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .card-header {
+        .close-x-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border: none;
+            border-radius: 50%;
+            background: #eee;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
             display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #333;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            line-height: 1;
         }
 
-        .card-avatar {
-            width: 80px;
-            height: 80px;
+        .close-x-btn:hover {
+            background: #ddd;
+            color: #333;
+        }
+
+        .card-main {
+            display: flex;
+            gap: 35px;
+        }
+
+        .card-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #cardNameText {
+            font-size: 32px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0;
+            letter-spacing: 2px;
+        }
+
+        #infoDesc {
+            font-size: 16px;
+            color: #555;
+            line-height: 1.8;
+            flex: 1;
+            letter-spacing: 1px;
+        }
+
+        .card-illustration-wrapper {
+            flex-shrink: 0;
+        }
+
+        .card-illustration {
+            width: 260px;
+            height: 380px;
             border-radius: 8px;
-            border: 2px solid #333;
             object-fit: cover;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card-footer .delete-btn {
+            width: auto;
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 4px;
+            background: transparent;
+            color: #999;
+            border: 1px solid #ddd;
+        }
+
+        .card-footer .delete-btn:hover {
+            background: #f8f8f8;
+            color: #666;
+            border-color: #ccc;
+        }
+
+        .card-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #666;
+            background: #f5f5f5;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab:hover {
+            background: #e8e8e8;
+        }
+
+        .tab.active:hover {
+            opacity: 0.9;
+        }
+
+        .card-image-view {
+            max-height: 400px;
+            overflow: auto;
+            text-align: center;
+        }
+
+        .card-profile-image {
+            max-width: 100%;
+            max-height: 380px;
+            border-radius: 8px;
+            object-fit: contain;
         }
 
         .card-info {
@@ -318,15 +461,84 @@
             align-items: flex-start;
         }
 
+        .form-container-wide {
+            display: flex;
+            gap: 20px;
+            align-items: stretch;
+            justify-content: space-between;
+        }
+
         .form-left {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 15px;
+            min-height: 400px;
+        }
+
+        .form-center {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-height: 400px;
         }
 
         .form-right {
-            flex: 1.5;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .form-item-small {
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .form-item-large {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-item-name {
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .form-item-intro {
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        .form-item-detail {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-item-full {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
+
+        .form-actions button {
+            flex: 1;
         }
 
         .form-group {
@@ -411,6 +623,160 @@
             border: 2px solid #667eea;
         }
 
+        .upload-area-wide {
+            width: 100%;
+            height: 120px;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .upload-area-wide:hover,
+        .upload-area-wide.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area-wide input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-image-wide {
+            width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            object-fit: contain;
+            border: 2px solid #667eea;
+            background: #fafafa;
+        }
+
+        .upload-area-tall {
+            width: 100%;
+            height: 220px;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background: #fafafa;
+        }
+
+        .upload-area-tall:hover,
+        .upload-area-tall.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area-tall input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-image-tall {
+            width: 100%;
+            max-height: 280px;
+            border-radius: 12px;
+            object-fit: contain;
+            border: 2px solid #667eea;
+            background: #fafafa;
+        }
+
+        .upload-area-large {
+            width: 100%;
+            flex: 1;
+            min-height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        .upload-area-large:hover,
+        .upload-area-large.dragover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .upload-area-large input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-image-large {
+            width: 100%;
+            flex: 1;
+            min-height: 200px;
+            border-radius: 12px;
+            object-fit: contain;
+            border: 2px solid #667eea;
+            background: #fafafa;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: none;
+            background: #ff4444;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        .remove-btn:hover {
+            opacity: 1;
+        }
+
         .upload-hint {
             display: none;
         }
@@ -463,7 +829,12 @@
 <body>
     <div class="header">
         <a href="index.html" class="back-btn">← 返回首页</a>
-        <button class="add-btn" id="addBtn">+ 添加人物</button>
+        <div class="header-actions">
+            <button class="import-btn" id="importBtn">📥 导入</button>
+            <button class="export-btn" id="exportBtn">📤 导出</button>
+            <button class="add-btn" id="addBtn">+ 添加人物</button>
+        </div>
+        <input type="file" id="importFile" accept=".json" style="display: none;">
     </div>
 
     <div class="container" id="container">
@@ -482,61 +853,105 @@
     </div>
 
     <div class="modal-overlay" id="modalOverlay">
-        <div class="profile-card">
-            <div class="card-header">
-                <img src="" alt="角色头像" class="card-avatar" id="cardAvatar">
-                <div class="card-info">
-                    <div class="card-name" id="cardName">角色姓名</div>
-                    <div class="card-title">人设卡</div>
+        <div class="profile-card" style="max-width: 900px; max-height: 90vh;">
+            <button class="close-x-btn" id="closeBtn">×</button>
+            
+            <div class="card-tabs">
+                <div class="tab active" id="tabProfile">卡片</div>
+                <div class="tab" id="tabImage">人设卡图片</div>
+            </div>
+            
+            <div class="card-content" id="cardContent">
+                <div class="card-main">
+                    <div class="card-illustration-wrapper">
+                        <img src="" alt="角色立绘" class="card-illustration" id="cardIllustration">
+                    </div>
+                    
+                    <div class="card-right">
+                        <div id="cardNameText">-</div>
+                        <div id="infoDesc">-</div>
+                    </div>
                 </div>
             </div>
-
-            <div class="card-body">
-                <div class="info-row">
-                    <span class="info-label">姓名</span>
-                    <span class="info-value" id="infoName">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">简介</span>
-                    <span class="info-value" id="infoDesc">-</span>
-                </div>
+            
+            <div class="card-image-view" id="cardImageView" style="display: none;">
+                <img src="" alt="人设卡图片" class="card-profile-image" id="cardProfileImage">
             </div>
 
-            <button class="delete-btn" id="deleteBtn" style="display: none;">删除角色</button>
-            <button class="close-btn" id="closeBtn">关闭</button>
+            <div class="card-footer">
+                <button class="delete-btn" id="deleteBtn" style="display: none;">🗑️ 删除角色</button>
+            </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="addModalOverlay">
-        <div class="profile-card" style="max-width: 600px;">
+        <div class="profile-card" style="max-width: 900px; max-height: 90vh; overflow-y: auto;">
             <h2 style="margin-bottom: 20px; border-bottom: 2px solid #333; padding-bottom: 10px;">添加人设卡</h2>
             
-            <div class="form-container">
+            <div class="form-container-wide">
                 <div class="form-left">
-                    <label style="margin-bottom: 10px; font-weight: 600;">头像图片</label>
-                    <div class="upload-area" id="avatarUpload">
-                        <div class="upload-icon">🖼️</div>
-                        <div class="upload-text">点击上传</div>
-                        <input type="file" accept="image/*" id="avatarFile">
+                    <div class="form-item-small">
+                        <label style="margin-bottom: 10px; font-weight: 600;">头像图片</label>
+                        <div class="image-container">
+                            <div class="upload-area" id="avatarUpload">
+                                <div class="upload-icon">🖼️</div>
+                                <div class="upload-text">点击上传</div>
+                                <input type="file" accept="image/*" id="avatarFile">
+                            </div>
+                            <img src="" alt="" class="preview-image" id="avatarPreview" style="display: none; margin-top: 15px;">
+                            <button class="remove-btn" id="removeAvatarBtn" style="display: none;">✕</button>
+                        </div>
                     </div>
-                    <img src="" alt="" class="preview-image" id="avatarPreview" style="display: none; margin-top: 15px;">
-                    <div class="image-size-warning" id="sizeWarning">⚠️ 图片过大，可能无法保存</div>
+                    
+                    <div class="form-item-large">
+                        <label style="margin-bottom: 10px; font-weight: 600;">立绘图片</label>
+                        <div class="image-container">
+                            <div class="upload-area-large" id="illustrationUpload">
+                                <div class="upload-icon">🎨</div>
+                                <div class="upload-text">点击上传</div>
+                                <input type="file" accept="image/*" id="illustrationFile">
+                            </div>
+                            <img src="" alt="" class="preview-image-large" id="illustrationPreview" style="display: none; margin-top: 15px;">
+                            <button class="remove-btn" id="removeIllustrationBtn" style="display: none;">✕</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-center">
+                    <div class="form-item-name">
+                        <div class="form-group">
+                            <label>角色姓名</label>
+                            <input type="text" id="characterName" placeholder="输入角色姓名">
+                        </div>
+                    </div>
+
+                    <div class="form-item-detail">
+                        <div class="form-group">
+                            <label>角色简介</label>
+                            <textarea id="characterDesc" placeholder="输入角色简介..."></textarea>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-right">
-                    <div class="form-group">
-                        <label>角色姓名</label>
-                        <input type="text" id="characterName" placeholder="输入角色姓名">
+                    <div class="form-item-full">
+                        <label style="display: block; margin-bottom: 10px; font-weight: 600;">人设卡图片（非必需）</label>
+                        <div class="image-container">
+                            <div class="upload-area-tall" id="profileCardUpload">
+                                <div class="upload-icon">📋</div>
+                                <div class="upload-text">点击上传人设卡图片</div>
+                                <input type="file" accept="image/*" id="profileCardFile">
+                            </div>
+                            <img src="" alt="" class="preview-image-tall" id="profileCardPreview" style="display: none; margin-top: 15px;">
+                            <button class="remove-btn" id="removeProfileCardBtn" style="display: none;">✕</button>
+                        </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>角色简介</label>
-                        <textarea id="characterDesc" placeholder="输入角色简介..."></textarea>
-                    </div>
-
-                    <button class="save-btn" id="saveCharacterBtn" style="margin-top: 20px;">保存人设卡</button>
-                    <button class="close-btn" id="closeAddBtn">取消</button>
                 </div>
+            </div>
+
+            <div class="form-actions">
+                <button class="save-btn" id="saveCharacterBtn">保存人设卡</button>
+                <button class="close-btn" id="closeAddBtn">取消</button>
             </div>
         </div>
     </div>
@@ -558,50 +973,109 @@
         const avatarUpload = document.getElementById('avatarUpload');
         const avatarFile = document.getElementById('avatarFile');
         const avatarPreview = document.getElementById('avatarPreview');
-        const sizeWarning = document.getElementById('sizeWarning');
+        const removeAvatarBtn = document.getElementById('removeAvatarBtn');
+        
+        const illustrationUpload = document.getElementById('illustrationUpload');
+        const illustrationFile = document.getElementById('illustrationFile');
+        const illustrationPreview = document.getElementById('illustrationPreview');
+        const removeIllustrationBtn = document.getElementById('removeIllustrationBtn');
+        
         const characterName = document.getElementById('characterName');
         const characterDesc = document.getElementById('characterDesc');
+        const cardIllustration = document.getElementById('cardIllustration');
+        
+        const profileCardUpload = document.getElementById('profileCardUpload');
+        const profileCardFile = document.getElementById('profileCardFile');
+        const profileCardPreview = document.getElementById('profileCardPreview');
+        const removeProfileCardBtn = document.getElementById('removeProfileCardBtn');
+        
+        const cardContent = document.getElementById('cardContent');
+        const cardImageView = document.getElementById('cardImageView');
+        const cardProfileImage = document.getElementById('cardProfileImage');
+        const tabProfile = document.getElementById('tabProfile');
+        
+        const importBtn = document.getElementById('importBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const importFile = document.getElementById('importFile');
+        const tabImage = document.getElementById('tabImage');
 
         let characters = [];
         let currentCharacterId = null;
         let currentImageData = '';
+        let currentIllustrationData = '';
+        let currentProfileCardData = '';
+        let zIndexCounter = 10;
         const MAX_IMAGE_SIZE = 2 * 1024 * 1024;
+        const MAX_PROFILECARD_SIZE = 28 * 1024 * 1024;
 
-        function loadCharacters() {
-            const saved = localStorage.getItem('characters');
-            if (saved) {
-                try {
-                    characters = JSON.parse(saved);
-                } catch (e) {
-                    characters = [];
+        async function loadCharacters() {
+            try {
+                const response = await fetch('/api/characters');
+                characters = await response.json();
+                
+                if (characters.length === 0) {
+                    characters = [
+                        {
+                            id: Date.now(),
+                            name: '神秘少女',
+                            desc: '元素法师，能够自由操控雷电与冰霜的力量',
+                            avatar: 'https://picsum.photos/400/400?random=10',
+                            illustration: '',
+                            profileCard: '',
+                            x: window.innerWidth / 2 - 50,
+                            y: window.innerHeight / 2 - 80
+                        }
+                    ];
+                    await saveCharacterToAPI(characters[0]);
                 }
+                
+                renderCharacters();
+                renderNavBar();
+            } catch (e) {
+                console.error('加载失败:', e);
+                characters = [];
+                renderCharacters();
+                renderNavBar();
             }
-            
-            if (characters.length === 0) {
-                characters = [
-                    {
-                        id: 1,
-                        name: '神秘少女',
-                        desc: '元素法师，能够自由操控雷电与冰霜的力量',
-                        avatar: 'https://picsum.photos/400/400?random=10',
-                        x: window.innerWidth / 2 - 50,
-                        y: window.innerHeight / 2 - 80
-                    }
-                ];
-                saveCharacters();
-            }
-            
-            renderCharacters();
-            renderNavBar();
         }
 
-        function saveCharacters() {
+        async function saveCharacterToAPI(character) {
             try {
-                localStorage.setItem('characters', JSON.stringify(characters));
-                return true;
+                const response = await fetch('/api/character', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(character)
+                });
+                return await response.json();
             } catch (e) {
                 console.error('保存失败:', e);
-                return false;
+                return null;
+            }
+        }
+
+        async function deleteCharacterFromAPI(charId) {
+            try {
+                const response = await fetch(`/api/character/${charId}`, {
+                    method: 'DELETE'
+                });
+                return await response.json();
+            } catch (e) {
+                console.error('删除失败:', e);
+                return null;
+            }
+        }
+
+        async function importCharactersToAPI(charactersList) {
+            try {
+                const response = await fetch('/api/import', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(charactersList)
+                });
+                return await response.json();
+            } catch (e) {
+                console.error('导入失败:', e);
+                return null;
             }
         }
 
@@ -627,32 +1101,18 @@
         }
 
         function makeDraggable(wrapper, char) {
-            let isDragging = false;
-            let startX, startY;
-            let startLeft, startTop;
-
             wrapper.addEventListener('mousedown', (e) => {
                 e.preventDefault();
-                isDragging = false;
-                startX = e.clientX;
-                startY = e.clientY;
                 
-                startLeft = parseFloat(wrapper.style.left) || char.x || 0;
-                startTop = parseFloat(wrapper.style.top) || char.y || 0;
+                const startX = e.clientX;
+                const startY = e.clientY;
+                const startLeft = parseFloat(wrapper.style.left) || char.x || 0;
+                const startTop = parseFloat(wrapper.style.top) || char.y || 0;
+                
+                wrapper.style.zIndex = 100;
 
-                document.addEventListener('mousemove', onMouseMove);
-                document.addEventListener('mouseup', onMouseUp);
-            });
-
-            function onMouseMove(e) {
-                e.preventDefault();
-                
-                const dx = Math.abs(e.clientX - startX);
-                const dy = Math.abs(e.clientY - startY);
-                
-                if (dx > 2 || dy > 2) {
-                    isDragging = true;
-                    wrapper.style.zIndex = 100;
+                function onMouseMove(e) {
+                    e.preventDefault();
                     
                     const newX = startLeft + (e.clientX - startX);
                     const newY = startTop + (e.clientY - startY);
@@ -665,23 +1125,29 @@
                     
                     wrapper.style.left = boundedX + 'px';
                     wrapper.style.top = boundedY + 'px';
-                    
-                    char.x = boundedX;
-                    char.y = boundedY;
-                    saveCharacters();
                 }
-            }
 
-            function onMouseUp() {
-                if (!isDragging) {
-                    showProfile(char);
+                function onMouseUp(e) {
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                    
+                    const endX = e.clientX;
+                    const endY = e.clientY;
+                    
+                    if (Math.abs(endX - startX) < 3 && Math.abs(endY - startY) < 3) {
+                        showProfile(char);
+                    } else {
+                        char.x = parseFloat(wrapper.style.left);
+                        char.y = parseFloat(wrapper.style.top);
+                        zIndexCounter++;
+                        wrapper.style.zIndex = zIndexCounter;
+                        saveCharacterToAPI(char);
+                    }
                 }
-                
-                isDragging = false;
-                wrapper.style.zIndex = 10;
-                document.removeEventListener('mousemove', onMouseMove);
-                document.removeEventListener('mouseup', onMouseUp);
-            }
+
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+            });
         }
 
         function renderNavBar() {
@@ -705,23 +1171,50 @@
 
         function showProfile(char) {
             currentCharacterId = char.id;
-            document.getElementById('cardAvatar').src = char.avatar;
-            document.getElementById('cardName').textContent = char.name;
-            document.getElementById('infoName').textContent = char.name;
+            
+            cardIllustration.src = char.illustration || char.profileCard || char.avatar;
+            cardProfileImage.src = char.profileCard || '';
+            document.getElementById('cardNameText').textContent = char.name;
             document.getElementById('infoDesc').textContent = char.desc;
             deleteBtn.style.display = characters.length > 1 ? 'block' : 'none';
+            
+            if (char.profileCard) {
+                tabImage.style.display = 'block';
+            } else {
+                tabImage.style.display = 'none';
+                tabProfile.classList.add('active');
+                tabImage.classList.remove('active');
+                cardContent.style.display = 'block';
+                cardImageView.style.display = 'none';
+            }
+            
             modalOverlay.classList.add('show');
             document.body.style.overflow = 'hidden';
         }
 
-        function deleteCurrentCharacter() {
+        tabProfile.addEventListener('click', () => {
+            tabProfile.classList.add('active');
+            tabImage.classList.remove('active');
+            cardContent.style.display = 'block';
+            cardImageView.style.display = 'none';
+        });
+
+        tabImage.addEventListener('click', () => {
+            tabImage.classList.add('active');
+            tabProfile.classList.remove('active');
+            cardContent.style.display = 'none';
+            cardImageView.style.display = 'block';
+        });
+
+        async function deleteCurrentCharacter() {
             if (characters.length <= 1) return;
             
             if (confirm('确定要删除这个角色吗？')) {
                 const index = characters.findIndex(c => c.id === currentCharacterId);
                 if (index !== -1) {
+                    const charToDelete = characters[index];
+                    await deleteCharacterFromAPI(charToDelete.id);
                     characters.splice(index, 1);
-                    saveCharacters();
                     renderCharacters();
                     renderNavBar();
                     closeModal();
@@ -766,10 +1259,20 @@
             avatarPreview.style.display = 'none';
             avatarPreview.src = '';
             currentImageData = '';
-            sizeWarning.style.display = 'none';
+            
+            illustrationPreview.style.display = 'none';
+            illustrationPreview.src = '';
+            currentIllustrationData = '';
+            
+            profileCardPreview.style.display = 'none';
+            profileCardPreview.src = '';
+            currentProfileCardData = '';
+            
             characterName.value = '';
             characterDesc.value = '';
             avatarUpload.style.display = 'flex';
+            illustrationUpload.style.display = 'flex';
+            profileCardUpload.style.display = 'flex';
             addModalOverlay.classList.add('show');
             document.body.style.overflow = 'hidden';
         });
@@ -795,32 +1298,129 @@
             avatarUpload.classList.remove('dragover');
             const file = e.dataTransfer.files[0];
             if (file && file.type.startsWith('image/')) {
-                processFile(file);
+                processAvatarFile(file);
                 avatarFile.files = e.dataTransfer.files;
             }
         });
 
-        function processFile(file) {
-            if (file.size > MAX_IMAGE_SIZE) {
-                sizeWarning.style.display = 'block';
-            } else {
-                sizeWarning.style.display = 'none';
+        illustrationFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                processIllustrationFile(file);
             }
+        });
 
+        illustrationUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            illustrationUpload.classList.add('dragover');
+        });
+
+        illustrationUpload.addEventListener('dragleave', () => {
+            illustrationUpload.classList.remove('dragover');
+        });
+
+        illustrationUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            illustrationUpload.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processIllustrationFile(file);
+                illustrationFile.files = e.dataTransfer.files;
+            }
+        });
+
+        profileCardFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                processProfileCardFile(file);
+            }
+        });
+
+        profileCardUpload.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            profileCardUpload.classList.add('dragover');
+        });
+
+        profileCardUpload.addEventListener('dragleave', () => {
+            profileCardUpload.classList.remove('dragover');
+        });
+
+        profileCardUpload.addEventListener('drop', (e) => {
+            e.preventDefault();
+            profileCardUpload.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                processProfileCardFile(file);
+                profileCardFile.files = e.dataTransfer.files;
+            }
+        });
+
+        function processAvatarFile(file) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 currentImageData = e.target.result;
                 avatarPreview.src = currentImageData;
                 avatarPreview.style.display = 'block';
                 avatarUpload.style.display = 'none';
+                removeAvatarBtn.style.display = 'block';
             };
             reader.readAsDataURL(file);
         }
 
-        saveCharacterBtn.addEventListener('click', () => {
+        removeAvatarBtn.addEventListener('click', () => {
+            avatarPreview.style.display = 'none';
+            avatarPreview.src = '';
+            currentImageData = '';
+            avatarUpload.style.display = 'flex';
+            removeAvatarBtn.style.display = 'none';
+        });
+
+        function processIllustrationFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentIllustrationData = e.target.result;
+                illustrationPreview.src = currentIllustrationData;
+                illustrationPreview.style.display = 'block';
+                illustrationUpload.style.display = 'none';
+                removeIllustrationBtn.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        removeIllustrationBtn.addEventListener('click', () => {
+            illustrationPreview.style.display = 'none';
+            illustrationPreview.src = '';
+            currentIllustrationData = '';
+            illustrationUpload.style.display = 'flex';
+            removeIllustrationBtn.style.display = 'none';
+        });
+
+        function processProfileCardFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                currentProfileCardData = e.target.result;
+                profileCardPreview.src = currentProfileCardData;
+                profileCardPreview.style.display = 'block';
+                profileCardUpload.style.display = 'none';
+                removeProfileCardBtn.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        removeProfileCardBtn.addEventListener('click', () => {
+            profileCardPreview.style.display = 'none';
+            profileCardPreview.src = '';
+            currentProfileCardData = '';
+            profileCardUpload.style.display = 'flex';
+            removeProfileCardBtn.style.display = 'none';
+        });
+
+        saveCharacterBtn.addEventListener('click', async () => {
             const name = characterName.value.trim();
             const desc = characterDesc.value.trim();
             const avatar = currentImageData;
+            const illustration = currentIllustrationData;
+            const profileCard = currentProfileCardData;
 
             if (!name) {
                 alert('请输入角色姓名');
@@ -832,8 +1432,8 @@
                 return;
             }
 
-            if (avatar.length > 5 * 1024 * 1024) {
-                alert('图片过大，请选择小于5MB的图片');
+            if (profileCard && profileCard.length > MAX_PROFILECARD_SIZE) {
+                alert('人设卡图片过大，请选择小于20MB的图片（转换后约27MB）');
                 return;
             }
 
@@ -842,21 +1442,85 @@
                 name: name,
                 desc: desc,
                 avatar: avatar,
+                illustration: illustration || '',
+                profileCard: profileCard || '',
                 x: 100 + Math.random() * (window.innerWidth - 300),
                 y: 100 + Math.random() * (window.innerHeight - 300)
             };
 
-            characters.push(newChar);
-            const success = saveCharacters();
+            const result = await saveCharacterToAPI(newChar);
             
-            if (success) {
+            if (result && result.success) {
+                characters.push(newChar);
                 renderCharacters();
                 renderNavBar();
                 closeModal();
                 alert('人设卡保存成功！');
             } else {
-                alert('保存失败，可能是图片太大了，请尝试使用较小的图片');
+                alert('保存失败！请检查服务器是否正常运行。');
             }
+        });
+
+        // 导出角色数据到本地文件
+        exportBtn.addEventListener('click', () => {
+            if (characters.length === 0) {
+                alert('没有角色数据可以导出！');
+                return;
+            }
+            
+            const dataStr = JSON.stringify(characters, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `characters_${new Date().toISOString().slice(0, 10)}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            alert(`成功导出 ${characters.length} 个角色！`);
+        });
+
+        // 导入角色数据
+        importBtn.addEventListener('click', () => {
+            importFile.click();
+        });
+
+        importFile.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const importedCharacters = JSON.parse(event.target.result);
+                    
+                    if (!Array.isArray(importedCharacters)) {
+                        alert('无效的文件格式！');
+                        return;
+                    }
+                    
+                    const confirmResult = confirm(`将导入 ${importedCharacters.length} 个角色，是否覆盖现有数据？`);
+                    if (confirmResult) {
+                        const result = await importCharactersToAPI(importedCharacters);
+                        if (result && result.success) {
+                            characters = importedCharacters;
+                            renderCharacters();
+                            renderNavBar();
+                            alert(`成功导入 ${importedCharacters.length} 个角色！`);
+                        } else {
+                            alert('导入失败！请检查服务器是否正常运行。');
+                        }
+                    }
+                } catch (error) {
+                    alert('文件解析失败，请确保是有效的JSON文件！');
+                }
+            };
+            reader.readAsText(file);
+            
+            importFile.value = '';
         });
 
         loadCharacters();
