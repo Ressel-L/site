@@ -1787,15 +1787,23 @@
         function showProfile(char) {
             currentCharacterId = char.id;
             
-            // 完全重置标签状态
-            if (tabProfile) {
-                tabProfile.classList.add('active');
-            }
+            // 检查是否有人设图和相册图片
+            const hasImage = char.profileCard && char.profileCard.trim() !== '';
+            const hasAlbum = char.album && char.album.length > 0;
+            
+            // 根据是否有图片决定显示哪些标签
             if (tabImage) {
+                tabImage.style.display = hasImage ? 'block' : 'none';
                 tabImage.classList.remove('active');
             }
             if (tabAlbum) {
+                tabAlbum.style.display = hasAlbum ? 'block' : 'none';
                 tabAlbum.classList.remove('active');
+            }
+            
+            // 完全重置标签状态
+            if (tabProfile) {
+                tabProfile.classList.add('active');
             }
             if (cardContent) {
                 cardContent.style.display = 'block';
@@ -1822,13 +1830,11 @@
             
             // 人设图页面只显示profileCard
             if (char.profileCard) {
-                if (tabImage) tabImage.style.display = 'block';
                 if (cardProfileImage) cardProfileImage.src = char.profileCard;
                 if (navArrowLeft) navArrowLeft.style.display = 'none';
                 if (navArrowRight) navArrowRight.style.display = 'none';
                 if (imageIndicators) imageIndicators.innerHTML = '';
             } else {
-                if (tabImage) tabImage.style.display = 'block';
                 if (cardProfileImage) cardProfileImage.src = '';
                 if (navArrowLeft) navArrowLeft.style.display = 'none';
                 if (navArrowRight) navArrowRight.style.display = 'none';
