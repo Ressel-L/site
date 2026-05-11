@@ -10,14 +10,13 @@
         html, body { width: 100%; height: 100%; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #f0f4f8 0%, #e8eef4 100%); }
         
         .container {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
             display: flex;
-            gap: 40px;
-            align-items: flex-start;
+            gap: 60px;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
             min-height: 100vh;
         }
         
@@ -142,18 +141,126 @@
         .color-50 { background: linear-gradient(135deg, #F8BFC6, #E895A0); }
         .color-80 { background: linear-gradient(135deg, #F5D98A, #E8C06A); }
         
+        .calculator-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 25px;
+            min-width: 280px;
+        }
+
+        .calculator-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .multiplication-form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 12px;
+            border: 1px solid #eee;
+        }
+
+        .number-row {
+            margin-bottom: 8px;
+        }
+
+        .number-row input {
+            width: 100%;
+            max-width: 180px;
+            padding: 10px 12px;
+            font-size: 18px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            text-align: right;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .number-row input:focus {
+            border-color: #4ecdc4;
+        }
+
+        .operator-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .operator {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .discount {
+            font-weight: bold;
+            color: #4ecdc4;
+            min-width: 60px;
+            text-align: right;
+        }
+
+        .divider {
+            width: 100%;
+            max-width: 180px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #4ecdc4, transparent);
+            margin-bottom: 8px;
+        }
+
+        .result-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .result-label {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .result-value {
+            color: #4ecdc4;
+            font-size: 24px;
+        }
+
         @media (max-width: 767px) {
-            .container { flex-direction: column; align-items: center; gap: 25px; }
-            .wheel-container { width: 260px; height: 260px; }
-            .list-section { width: 100%; max-width: 320px; }
-            .btn { padding: 10px 24px; font-size: 14px; }
-            .pointer { border-left-width: 12px; border-right-width: 12px; border-top-width: 28px; }
-            .pointer::after { border-left-width: 6px; border-right-width: 6px; border-top-width: 12px; top: -28px; left: -6px; }
+            .calculator-section { width: 100%; max-width: 320px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="calculator-section">
+            <h3>折扣计算器</h3>
+            <div class="calculator">
+                <div class="multiplication-form">
+                    <div class="number-row">
+                        <input type="number" id="multiplier" placeholder="金额" step="0.01" min="0">
+                    </div>
+                    <div class="operator-row">
+                        <span class="operator">×</span>
+                        <span class="discount" id="discountDisplay">100%</span>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="result-row">
+                        <span class="result-label">应付:</span>
+                        <span class="result-value" id="calculationResult">0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="wheel-section">
             <div class="wheel-container">
                 <svg class="wheel" id="wheel" viewBox="0 0 300 300">
@@ -198,7 +305,7 @@
     </div>
 
     <script>
-        (function() {
+        document.addEventListener('DOMContentLoaded', function() {
             var prizes = [
                 { name: '全价', percent: 5, color: '#E8868A', gradient: 'url(#g1)' },
                 { name: '免单', percent: 15, color: '#7DB879', gradient: 'url(#g2)' },
@@ -215,6 +322,18 @@
             var btnStart = document.getElementById('btnStart');
             var btnReset = document.getElementById('btnReset');
             var result = document.getElementById('result');
+
+            // 计算器相关变量
+            var multiplierInput = document.getElementById('multiplier');
+            var discountDisplay = document.getElementById('discountDisplay');
+            var calculationResult = document.getElementById('calculationResult');
+            var currentDiscount = 1; // 默认100%
+
+            // 检查DOM元素是否存在
+            if (!wheel || !btnStart || !btnReset || !result) {
+                console.error('无法找到必要的DOM元素');
+                return;
+            }
 
             var centerX = 150;
             var centerY = 150;
@@ -252,7 +371,23 @@
                 });
             }
 
+            // 计算器函数
+            function updateDiscount(discount) {
+                currentDiscount = discount;
+                discountDisplay.textContent = Math.round(discount * 100) + '%';
+                calculateResult();
+            }
+
+            function calculateResult() {
+                var multiplier = parseFloat(multiplierInput.value) || 0;
+                var calcResult = multiplier * currentDiscount;
+                calculationResult.textContent = calcResult.toFixed(2);
+            }
+
             initWheel();
+            
+            // 在initWheel之后添加事件监听，确保DOM已加载
+            multiplierInput.addEventListener('input', calculateResult);
 
             var isSpinning = false;
             var currentRotation = 0;
@@ -334,14 +469,16 @@
                         var winner = getPrizeAtAngle(pointerAngle);
                         
                         var resultText = '';
+                        var discount = 1; // 默认全价
                         switch(winner.prize.name) {
-                            case '全价': resultText = '寄几付钱！🎉'; break;
-                            case '免单': resultText = '全额报销！💳'; break;
-                            case '2折': resultText = '报销80%！🎁'; break;
-                            case '5折': resultText = '报销一半！❤️'; break;
-                            case '8折': resultText = '报销20%！😊'; break;
+                            case '全价': resultText = '寄几付钱！🎉'; discount = 1; break;
+                            case '免单': resultText = '全额报销！💳'; discount = 0; break;
+                            case '2折': resultText = '报销80%！🎁'; discount = 0.2; break;
+                            case '5折': resultText = '报销一半！❤️'; discount = 0.5; break;
+                            case '8折': resultText = '报销20%！😊'; discount = 0.8; break;
                         }
                         result.textContent = resultText;
+                        updateDiscount(discount);
                         
                         document.querySelectorAll('.prize-item').forEach(function(item) {
                             if (item.dataset.prize === winner.prize.name) item.classList.add('highlight');
@@ -358,13 +495,14 @@
                 currentRotation = 0;
                 wheel.style.transform = 'rotate(0deg)';
                 result.textContent = '这顿饭付多少钱？';
+                updateDiscount(1); // 重置为100%
                 document.querySelectorAll('.segment').forEach(function(seg) {
                     seg.classList.remove('highlight');
                     seg.style.filter = '';
                 });
                 document.querySelectorAll('.prize-item').forEach(function(el) { el.classList.remove('highlight'); });
             });
-        })();
+        });
     </script>
 </body>
 </html>
